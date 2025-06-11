@@ -19,7 +19,7 @@ def get_single_selected_node():
     return selected[0]
 
 
-def create_and_insert_hou_node(parent_node: hou.node, type: str, name: str):
+def create_and_insert_hou_node(parent_node: hou.Node, type: str, name: str):
     """
     Creates and inserts a node as an output of the parent_node into a current nodes stream,
     Returns: created and inserted node
@@ -59,7 +59,7 @@ def offset_outputs_position(root):
             queue.append(node)
 
 
-def compute_mat_assign_index(material_assign_node: hou.node):
+def compute_mat_assign_index(material_assign_node: hou.Node):
     """
     Computes the next material assignment index.
     If there is only one material and its path is empty, returns the current index.
@@ -74,7 +74,7 @@ def compute_mat_assign_index(material_assign_node: hou.node):
     return new_mat_index
 
 
-def populate_mat_assign_parms(material_assign_node: hou.node, mat_index: int, usd_prim: Usd.Prim,
+def populate_mat_assign_parms(material_assign_node: hou.Node, mat_index: int, usd_prim: Usd.Prim,
                               material_prim: Usd.Prim):
     """
     Populates the material assignment parameters for a new material entry.
