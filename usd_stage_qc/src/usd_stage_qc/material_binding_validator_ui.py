@@ -284,16 +284,11 @@ class MaterialBindingChecker(QtWidgets.QDialog):
                     _status_messages.handle_error("Failed to create the Assign Material node. "
                                                   "Ensure you are in a writable context.")
 
-            mat_num = self.assign_mat_node.parm("nummaterials").eval()
 
-            if mat_num <= 1 and self.assign_mat_node.parm(f"matspecpath{mat_num}").eval() == '':
-                new_mat_index = mat_num
-            else:
-                new_mat_index = mat_num + 1
+            #Get material index and populate assigne material paramenters
+            new_mat_index =_houdini.compute_mat_assign_index(self.assign_mat_node)
+            _houdini.populate_mat_assign_parms(self.assign_mat_node, new_mat_index, usd_prim, material_prim)
 
-            self.assign_mat_node.parm("nummaterials").set(new_mat_index)
-            self.assign_mat_node.parm(f"primpattern{new_mat_index}").set(str(usd_prim.GetPath()))
-            self.assign_mat_node.parm(f"matspecpath{new_mat_index}").set(str(material_prim.GetPath()))
             self.prim_bound_path.setText(str(material_prim.GetPath()))
         else:
             _status_messages.handle_error("No material selected. "

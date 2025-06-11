@@ -56,3 +56,18 @@ def offset_outputs_position(root):
 
         for node in current.outputs():
             queue.append(node)
+
+def compute_mat_assign_index(material_assign_node):
+    mat_num = material_assign_node.parm("nummaterials").eval()
+
+    if mat_num <= 1 and material_assign_node.parm(f"matspecpath{mat_num}").eval() == '':
+        new_mat_index = mat_num
+    else:
+        new_mat_index = mat_num + 1
+    return new_mat_index
+
+def populate_mat_assign_parms(material_assign_node, mat_index, usd_prim, material_prim):
+    material_assign_node.parm("nummaterials").set(mat_index)
+    material_assign_node.parm(f"primpattern{mat_index}").set(str(usd_prim.GetPath()))
+    material_assign_node.parm(f"matspecpath{mat_index}").set(str(material_prim.GetPath()))
+
