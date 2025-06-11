@@ -1,4 +1,5 @@
 import hou
+from pxr import Usd
 import os
 from usd_stage_qc import _status_messages
 
@@ -57,7 +58,13 @@ def offset_outputs_position(root):
         for node in current.outputs():
             queue.append(node)
 
-def compute_mat_assign_index(material_assign_node):
+
+def compute_mat_assign_index(material_assign_node: hou.node):
+    """
+    Computes the next material assignment index.
+    If there is only one material and its path is empty, returns the current index.
+    Otherwise, increments the current material count by 1 and returns it.
+    """
     mat_num = material_assign_node.parm("nummaterials").eval()
 
     if mat_num <= 1 and material_assign_node.parm(f"matspecpath{mat_num}").eval() == '':
@@ -66,8 +73,12 @@ def compute_mat_assign_index(material_assign_node):
         new_mat_index = mat_num + 1
     return new_mat_index
 
-def populate_mat_assign_parms(material_assign_node, mat_index, usd_prim, material_prim):
+
+def populate_mat_assign_parms(material_assign_node: hou.node, mat_index: int, usd_prim: Usd.Prim,
+                              material_prim: Usd.Prim):
+    """
+    Populates the material assignment parameters for a new material entry.
+    """
     material_assign_node.parm("nummaterials").set(mat_index)
     material_assign_node.parm(f"primpattern{mat_index}").set(str(usd_prim.GetPath()))
     material_assign_node.parm(f"matspecpath{mat_index}").set(str(material_prim.GetPath()))
-
