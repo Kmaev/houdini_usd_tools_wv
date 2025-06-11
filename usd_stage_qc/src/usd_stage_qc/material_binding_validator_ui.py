@@ -117,6 +117,11 @@ class MaterialBindingChecker(QtWidgets.QDialog):
         self.tree_mat_list.setHeaderLabels(["Material libreris"])
 
         self.assign_layout.addWidget(self.tree_mat_list)
+
+        # Add Bulk Assing QCheckBox
+        self.bulk_assign_check =QtWidgets.QCheckBox("Bulk assign to all filtered primitives")
+        self.assign_layout.addWidget(self.bulk_assign_check)
+        
         # Add Assigne Material button
         self.assign_mat_btn = QtWidgets.QPushButton("Assign")
         self.assign_layout.addWidget(self.assign_mat_btn)
@@ -279,9 +284,16 @@ class MaterialBindingChecker(QtWidgets.QDialog):
             if self.assign_mat_node is None:
                 _status_messages.handle_error("Failed to create the Assign Material node. "
                                               "Ensure you are in a writable context.")
-
+        # Bulk Assign selected material to all filtered assets
+        if self.bulk_assign_check.isChecked():
+            selected_items = [
+                self.search_output.item(i)
+                for i in range(self.search_output.count())
+                if not self.search_output.item(i).isHidden()
+            ]
         # Get the selection list
-        selected_items = self.get_selection(self.search_output)
+        else:
+            selected_items = self.get_selection(self.search_output)
 
         if selected_items is not None:
             for item in selected_items:
@@ -351,9 +363,7 @@ class MaterialBindingChecker(QtWidgets.QDialog):
         for index in range(self.search_output.count()):
             item = self.search_output.item(index)
 
-            print(item)
-            if item.text().lower() in search_results:
-                print(f"match found: {search_results} is {item.text().lower()}")
+
             if item.text().lower() in search_results or self.search_line.text() == '':
                 item.setHidden(False)
             else:
