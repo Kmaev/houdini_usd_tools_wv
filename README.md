@@ -11,12 +11,15 @@ This repo is a growing collection of small utilities — aimed at improving work
 - Allows searching and filtering prims with missing materials using a Trie-based search. 
 - Displays prim details (name, path, type, bound material) in a detail view.
 - Provides a material library browser and enables assigning materials to selected prims.
+- Supports bulk assign to filtered primitives:
+When the checkbox "Bulk assign material to all filtered" is enabled, the selected material
+is applied to all filtered primitives, regardless of manual selection.
 
-![img_2](https://github.com/user-attachments/assets/7ff782c1-0f24-46d2-b82d-d9cce7cc9819)
+<img width="994" alt="image" src="https://github.com/user-attachments/assets/8ffbdf88-3c03-4594-885f-55bde9370c64" />
 
+Bulk assign materials based on filter:
 
-![img_3](https://github.com/user-attachments/assets/578afba1-814e-4288-90d4-4fdd613dd224)
-
+<img width="994" alt="image" src="https://github.com/user-attachments/assets/7e834c37-aeeb-48f4-9b52-1225117e716f" />
 
 ### USD Scene Template Generator
 
