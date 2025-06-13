@@ -31,14 +31,14 @@ def collect_prims_without_material(stage: Usd.Stage) -> list[str]:
     for prim in iterator:
         if not iterator.IsPostVisit() and prim.IsA(UsdGeom.Imageable):
 
-            bound_material, strength = check_prim_material_binding(prim)
-            if not bound_material and prim.IsA(UsdGeom.Mesh):
-                no_material.append(prim)
-
+            bound_material, _ = check_prim_material_binding(prim)
+            if prim.IsA(UsdGeom.Mesh):
+                if not bound_material or not bound_material.GetPrim().IsActive():
+                    no_material.append(prim)
     return no_material
 
 
-def check_prim_material_binding(prim: Usd.Prim) ->  Tuple[Usd.Prim, UsdShade.Tokens]:
+def check_prim_material_binding(prim: Usd.Prim) -> Tuple[Usd.Prim, UsdShade.Tokens]:
     """
     Checks if a primitive has material binding
     """
