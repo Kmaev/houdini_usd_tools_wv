@@ -210,6 +210,7 @@ class MaterialBindingChecker(QtWidgets.QDialog):
         """
         self.clear_details_view()
         self.populate_prim_list()
+        self.search_line.clear()
 
     def clear_details_view(self):
         self.prim_name_label.clear()
