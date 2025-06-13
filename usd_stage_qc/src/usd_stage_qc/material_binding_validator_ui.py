@@ -93,16 +93,6 @@ class MaterialBindingChecker(QtWidgets.QDialog):
         self.prim_type_label.setAlignment(QtCore.Qt.AlignLeft)
         self.frame_layout.addWidget(self.prim_type_label)
 
-        # Add Material Status Text Label
-
-        self.mat_status_text_label = QtWidgets.QLabel("Material Status:")
-        self.frame_layout.addWidget(self.mat_status_text_label)
-
-        # Add Material Status Label
-        self.mat_status_label = QtWidgets.QLabel()
-        self.mat_status_label.setAlignment(QtCore.Qt.AlignLeft)
-        self.frame_layout.addWidget(self.mat_status_label)
-
         # Add Prim Bound Label QLabel
         self.prim_bound_label = QtWidgets.QLabel("\nMaterial Bind:")
         self.prim_bound_label.setAlignment(QtCore.Qt.AlignLeft)
@@ -130,14 +120,14 @@ class MaterialBindingChecker(QtWidgets.QDialog):
         # Add Materials Tree View
 
         self.tree_mat_list = QtWidgets.QTreeWidget(self)
-        self.tree_mat_list.setHeaderLabels(["Material Libraries"])
+        self.tree_mat_list.setHeaderLabels(["Material libreris"])
         self.assign_layout.addWidget(self.tree_mat_list)
 
-        # Add Bulk Assign QCheckBox
+        # Add Bulk Assing QCheckBox
         self.bulk_assign_check = QtWidgets.QCheckBox("Bulk assign to all filtered primitives")
         self.assign_layout.addWidget(self.bulk_assign_check)
 
-        # Add Assign Material button
+        # Add Assigne Material button
         self.assign_mat_btn = QtWidgets.QPushButton("Assign")
         self.assign_layout.addWidget(self.assign_mat_btn)
 
@@ -166,7 +156,7 @@ class MaterialBindingChecker(QtWidgets.QDialog):
         # _____________________________
         # Buttons connections
         self.search_output.itemSelectionChanged.connect(self.on_list_item_changed)
-        self.assign_mat_btn.clicked.connect(self.on_assign_material_executed)
+        self.assign_mat_btn.clicked.connect(self.bind_material)
         self.refresh_btn.clicked.connect(self.on_refresh_executed)
         self.search_line.textEdited.connect(self.run_search)
         self.search_line.textChanged.connect(self.reset_search_state)
@@ -217,9 +207,6 @@ class MaterialBindingChecker(QtWidgets.QDialog):
             self.prim_path_text.setText(path)
             self.prim_type_label.setText(str(usd_prim.GetTypeName()))
             mat = _usd.check_prim_material_binding(usd_prim)[0]
-
-            self.mat_status_label.setText(
-                str(_usd.solve_material_status(mat))) if mat else self.mat_status_label.setText("None")
             self.prim_bound_path.setText(str(mat.GetPath())) if mat else self.prim_bound_path.setText('None')
 
     def on_refresh_executed(self):
@@ -235,8 +222,8 @@ class MaterialBindingChecker(QtWidgets.QDialog):
         self.prim_name_label.clear()
         self.prim_path_text.clear()
         self.prim_type_label.clear()
-        self.mat_status_label.clear()
         self.prim_bound_path.clear()
+        print(f"Call clear detail view")
 
     def populate_material_tree(self):
         """
@@ -291,14 +278,9 @@ class MaterialBindingChecker(QtWidgets.QDialog):
         else:
             self.tree_mat_list.collapseAll()
 
-    def on_assign_material_executed(self):
+    def bind_material(self):
         """
-        Executes all logic to bind the selected material to one or more primitives.
-        Validates the selected material from the material library.
-        Creates an Assign Material node if one does not already exist.
-        Binds the material to selected primitives or all filtered primitives (if bulk assign is checked)
-        Updates the detail view data.
-
+        Binds the selected material to the selected prim.
         """
         # Check if the selected material is valid and get its metadata
         selected_mat_item = self.get_selection(self.tree_mat_list)
@@ -313,20 +295,20 @@ class MaterialBindingChecker(QtWidgets.QDialog):
         else:
             _status_messages.handle_error("No material selected. "
                                           "Please select a material from the material library.")
-        # Check if an Assign Material node already exists or needs to be created
+            # Check if an Assign Material node already exists or needs to be created
         if self.assign_mat_node is None:
             self.create_assign_material_node()
             if self.assign_mat_node is None:
                 _status_messages.handle_error("Failed to create the Assign Material node. "
                                               "Ensure you are in a writable context.")
-        #  If Bulk Assign is checked, selected_items is set to all filtered primitives
+        # Bulk Assign selected material to all filtered assets
         if self.bulk_assign_check.isChecked():
             selected_items = [
                 self.search_output.item(i)
                 for i in range(self.search_output.count())
                 if not self.search_output.item(i).isHidden()
             ]
-        # Get the selection list if bulk selection is not checked
+        # Get the selection list
         else:
             selected_items = self.get_selection(self.search_output)
 
@@ -344,19 +326,7 @@ class MaterialBindingChecker(QtWidgets.QDialog):
                 _houdini.populate_mat_assign_parms(self.assign_mat_node, new_mat_index, usd_prim, material_prim)
 
                 if self.get_selection(self.search_output):
-                    self.mat_status_label.setText(str(_usd.solve_material_status(
-                        material_prim))) if material_prim else self.mat_status_label.setText("None")
                     self.prim_bound_path.setText(str(material_prim.GetPath()))
-
-        # Set selection on the first visible item in a list if the bulk assign is checked
-        if self.bulk_assign_check.isChecked():
-            for i in range(self.search_output.count()):
-                item = self.search_output.item(i)
-                if not item.isHidden():
-                    self.search_output.setCurrentItem(item)
-                    item.setSelected(True)
-                    break
-            self.select_first_visible_item(self.search_output)
         else:
             _status_messages.handle_error("No geometry selected. Please select a primitive from the list.")
             return
@@ -423,7 +393,6 @@ class MaterialBindingChecker(QtWidgets.QDialog):
     def reset_search_state(self, text):
         if not text:
             self.searching = False
-            self.search_output.clearSelection()
 
 
 dialog = None
