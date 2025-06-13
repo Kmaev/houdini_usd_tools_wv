@@ -112,6 +112,11 @@ class MaterialBindingChecker(QtWidgets.QDialog):
         self.assign_grp.setLayout(self.assign_layout)
         self.central_layout.addWidget(self.assign_grp)
 
+        # Add Expand all QCheck Box
+
+        self.expand_all_check = QtWidgets.QCheckBox("Expand All")
+        self.assign_layout.addWidget(self.expand_all_check)
+
         # Add Materials Tree View
 
         self.tree_mat_list = QtWidgets.QTreeWidget(self)
@@ -155,6 +160,7 @@ class MaterialBindingChecker(QtWidgets.QDialog):
         self.refresh_btn.clicked.connect(self.on_refresh_executed)
         self.search_line.textEdited.connect(self.run_search)
         self.search_line.textChanged.connect(self.reset_search_state)
+        self.expand_all_check.toggled.connect(self.on_expand_all_check)
 
     def populate_prim_list(self):
         """
@@ -262,6 +268,15 @@ class MaterialBindingChecker(QtWidgets.QDialog):
             found.setData(0, QtCore.Qt.UserRole, metadata)
 
         self.build_tree_recursive(found, parts[1:], material_prim)
+
+    def on_expand_all_check(self):
+        """
+        Expands the material view tree when checked, collapses it when unchecked.
+        """
+        if self.expand_all_check.isChecked():
+            self.tree_mat_list.expandAll()
+        else:
+            self.tree_mat_list.collapseAll()
 
     def bind_material(self):
         """
