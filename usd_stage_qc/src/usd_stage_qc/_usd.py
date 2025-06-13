@@ -33,7 +33,7 @@ def collect_prims_without_material(stage: Usd.Stage) -> list[str]:
 
             bound_material, _ = check_prim_material_binding(prim)
             if prim.IsA(UsdGeom.Mesh):
-                if not bound_material or not bound_material.GetPrim().IsActive():
+                if not bound_material or not is_material_active(bound_material):
                     no_material.append(prim)
     return no_material
 
@@ -45,6 +45,24 @@ def check_prim_material_binding(prim: Usd.Prim) -> Tuple[Usd.Prim, UsdShade.Toke
     mat_bind_api = UsdShade.MaterialBindingAPI(prim)
     bound_material, strength = mat_bind_api.ComputeBoundMaterial()
     return bound_material, strength
+
+
+def is_material_active(mat: Usd.Prim) -> bool:
+    """
+    Checks if material is material.
+    """
+    return mat.GetPrim().IsActive()
+
+
+def solve_material_status(mat: Usd.Prim) -> str:
+    """
+    Returns material status string.
+    """
+    if mat is None:
+        return None
+    if not is_material_active(mat):
+        return "Deactivated"
+    return "Active"
 
 
 def check_live_houdini_stage(stage):
