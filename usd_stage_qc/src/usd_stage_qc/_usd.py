@@ -31,20 +31,38 @@ def collect_prims_without_material(stage: Usd.Stage) -> list[str]:
     for prim in iterator:
         if not iterator.IsPostVisit() and prim.IsA(UsdGeom.Imageable):
 
-            bound_material, strength = check_prim_material_binding(prim)
-            if not bound_material and prim.IsA(UsdGeom.Mesh):
-                no_material.append(prim)
-
+            bound_material, _ = check_prim_material_binding(prim)
+            if prim.IsA(UsdGeom.Mesh):
+                if not bound_material or not is_material_active(bound_material):
+                    no_material.append(prim)
     return no_material
 
 
-def check_prim_material_binding(prim: Usd.Prim) ->  Tuple[Usd.Prim, UsdShade.Tokens]:
+def check_prim_material_binding(prim: Usd.Prim) -> Tuple[Usd.Prim, UsdShade.Tokens]:
     """
     Checks if a primitive has material binding
     """
     mat_bind_api = UsdShade.MaterialBindingAPI(prim)
     bound_material, strength = mat_bind_api.ComputeBoundMaterial()
     return bound_material, strength
+
+
+def is_material_active(mat: Usd.Prim) -> bool:
+    """
+    Checks if material is material.
+    """
+    return mat.GetPrim().IsActive()
+
+
+def solve_material_status(mat: Usd.Prim) -> str:
+    """
+    Returns material status string.
+    """
+    if mat is None:
+        return None
+    if not is_material_active(mat):
+        return "Deactivated"
+    return "Active"
 
 
 def check_live_houdini_stage(stage):
