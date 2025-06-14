@@ -15,11 +15,15 @@ This repo is a growing collection of small utilities — aimed at improving work
 When the checkbox "Bulk assign material to all filtered" is enabled, the selected material
 is applied to all filtered primitives, regardless of manual selection.
 
-<img width="994" alt="image" src="https://github.com/user-attachments/assets/8ffbdf88-3c03-4594-885f-55bde9370c64" />
+Demo Presentation:
+
+https://vimeo.com/1093300593
+
+<img width="1004" alt="image" src="https://github.com/user-attachments/assets/b939f8f4-fb51-4b10-80f2-8a63207afc13" />
 
 Bulk assign materials based on filter:
 
-<img width="994" alt="image" src="https://github.com/user-attachments/assets/7e834c37-aeeb-48f4-9b52-1225117e716f" />
+<img width="1004" alt="image" src="https://github.com/user-attachments/assets/71d5c16f-1add-4b82-9422-17da12a0b8db" />
 
 ### USD Scene Template Generator
 
