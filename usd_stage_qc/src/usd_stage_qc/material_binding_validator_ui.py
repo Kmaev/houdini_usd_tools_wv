@@ -18,7 +18,7 @@ class MaterialBindingChecker(QtWidgets.QDialog):
         self.mat_binds = []
         self.searching = False
 
-        self.resize(1000, 700)
+        self.resize(1000, 800)
         self.setWindowTitle('USD Material Binding Validator')
         self.central_layout = QtWidgets.QVBoxLayout()
         self.central_layout.setAlignment(QtCore.Qt.AlignTop)
@@ -217,7 +217,6 @@ class MaterialBindingChecker(QtWidgets.QDialog):
             self.prim_path_text.setText(path)
             self.prim_type_label.setText(str(usd_prim.GetTypeName()))
             mat = _usd.check_prim_material_binding(usd_prim)[0]
-
             self.mat_status_label.setText(
                 str(_usd.solve_material_status(mat))) if mat else self.mat_status_label.setText("None")
             self.prim_bound_path.setText(str(mat.GetPath())) if mat else self.prim_bound_path.setText('None')
@@ -360,6 +359,7 @@ class MaterialBindingChecker(QtWidgets.QDialog):
         else:
             _status_messages.handle_error("No geometry selected. Please select a primitive from the list.")
             return
+        self.search_output.clearSelection()
 
     def create_assign_material_node(self):
         """
